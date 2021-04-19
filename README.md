@@ -20,4 +20,6 @@ youtubeex is a free and open source project based on PowerShell script for downl
 
 .\youtubeex -Url https://www.youtube.com/watch?v=EFCdGPQYjEs -Simulate -Verbose
 
-.\youtubeex -Url https://www.youtube.com/channel/UCPKT_csvP72boVX0XrMtagQ/videos  -PlaylistSubdirectory -Verbose
+.\youtubeex -Url https://www.youtube.com/channel/UCPKT_csvP72boVX0XrMtagQ/videos -PlaylistSubdirectory -Verbose
+
+.\youtubeex -Url https://www.youtube.com/channel/UCPKT_csvP72boVX0XrMtagQ/videos -ArchiveFilePath "archive1.txt"

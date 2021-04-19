@@ -16,7 +16,13 @@ Param(
     [switch] $Simulate,
 
     [Parameter(Mandatory=$false, HelpMessage='Set output path format to include playlist directory')]
-    [switch] $PlaylistSubdirectory
+    [switch] $PlaylistSubdirectory,
+
+    [Parameter(Mandatory=$false, HelpMessage='ParallelProcessing')]
+    [switch] $ParallelProcessing,
+
+    [Parameter(Mandatory=$false, HelpMessage='Archive file path for playlist incremental')]
+    [String] $ArchiveFilePath = ''
 )
 
 # Prepare parameters
@@ -25,16 +31,24 @@ $parameters = ''
 $parameters += ' --extract-audio  --audio-format mp3 --audio-quality 0'
 $parameters += ' --ffmpeg-location ' + $FFmpegPath
 $parameters += $Simulate.IsPresent ? ' -s' : ''
-$parameters += " -o '" + $OutputPath + ($PlaylistSubdirectory.IsPresent ? '%(playlist)s\%(title)s.%(ext)s' : '%(title)s.%(ext)s') + "'"
+$parameters += ' -o "' + $OutputPath + ($PlaylistSubdirectory.IsPresent ? '%(playlist)s\%(title)s.%(ext)s' : '%(title)s.%(ext)s') + '"'
+$parameters += $ArchiveFilePath -eq "" ? '' : ' --download-archive "' + $ArchiveFilePath + '"'
 
 # Output filename format
 
 # foreach input URL execute youtube-dl
 foreach ($UrlItem in $Url) {
-    $cmd = $YoutubeDLPath + $parameters + ' ' + $UrlItem
+    $cmd = $parameters + ' ' + $UrlItem
+    Write-Verbose $cmd
 
-    Write-Verbose $cmd   
-    Invoke-Expression $cmd
+    # Invoke-Expression $OutputPath + ' ' + $cmd
+
+    if ($ParallelProcessing.IsPresent) {
+        Start-Process -FilePath $YoutubeDLPath -ArgumentList $cmd -NoNewWindow -WorkingDirectory $OutputPath
+    } else {
+        Start-Process -FilePath $YoutubeDLPath -ArgumentList $cmd -NoNewWindow -WorkingDirectory $OutputPath -Wait
+    }
+
 }
 
 Write-Host -ForegroundColor Green 'Done.'
