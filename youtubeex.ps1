@@ -4,7 +4,7 @@ Param(
     [String[]] $Url,
 
     [Parameter(Mandatory=$false, Position=1, HelpMessage='Enter Output Directory Path.')]
-    [String] $OutputPath = 'C:\Users\hkusu\Desktop\Temp\',
+    [String] $OutputPath = 'C:\Users\hkusu\Downloads\YTDownload\',
 
     [Parameter(Mandatory=$false, HelpMessage='YouTube-dl.exe path.')]
     [String] $YoutubeDLPath = 'C:\Users\hkusu\OneDrive\Programs\youtube-dl.exe',
@@ -26,7 +26,6 @@ Param(
 )
 
 # Prepare parameters
-
 $parameters = ''
 $parameters += ' --extract-audio  --audio-format mp3 --audio-quality 0'
 $parameters += ' --ffmpeg-location ' + $FFmpegPath
@@ -34,9 +33,7 @@ $parameters += $Simulate.IsPresent ? ' -s' : ''
 $parameters += ' -o "' + $OutputPath + ($PlaylistSubdirectory.IsPresent ? '%(playlist)s\%(title)s.%(ext)s' : '%(title)s.%(ext)s') + '"'
 $parameters += $ArchiveFilePath -eq "" ? '' : ' --download-archive "' + $ArchiveFilePath + '"'
 
-# Output filename format
-
-# foreach input URL execute youtube-dl
+# foreach input URL execute youtube-dl (which will run FFmpeg)
 foreach ($UrlItem in $Url) {
     $cmd = $parameters + ' ' + $UrlItem
     Write-Verbose $cmd
